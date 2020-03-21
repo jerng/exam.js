@@ -1,0 +1,35 @@
+{
+  "name": "exam.js",
+  "version": "pre-release",
+  "description": "Javascript testing framework.",
+  "main": "",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "doxdox": "^3.0.0"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.3"
+  },
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerng/exam.js.git"
+  },
+  "keywords": [
+    "javascript",
+    "testing",
+    "ecmascript"
+  ],
+  "author": "Jerng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jerng/exam.js/issues"
+  },
+  "homepage": "https://github.com/jerng/exam.js#readme"
+}
