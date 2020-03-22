@@ -416,7 +416,9 @@ ${ data.concerns[i].vfun.toString() }
                     render = () => {
                         console.groupCollapsed      ( `Test: #${ currentTestCount } passed - ${ data.concerns[i].test }` )
                         console.log                 ( `
-*   Returned: ${ returned }`) 
+*   Returned: ${ () => {
+    try { return returned } catch ( e ) {} 
+    finally { return JSON.stringify ( returned, null, 2) } } }`) 
                         {   console.groupCollapsed  ( `Code:` )
                             console.log             ( data.concerns[i].code.toString() )
                             console.groupEnd        ()
@@ -434,7 +436,9 @@ ${ data.concerns[i].vfun.toString() }
                         console.group       ( `Test: #${ currentTestCount } failed - ${ data.concerns[i].test }` )
                         console.error       ( 
 `
-*   Returned: ${ returned }
+*   Returned: ${ () => {
+    try { return returned } catch ( e ) {} 
+    finally { return JSON.stringify ( returned, null, 2) } } } 
 *   Message : ${ e }`) 
                         {   if ( this.config.expand.unexpectedCode ) 
                                     { console.group             ( codeLabel ) 
