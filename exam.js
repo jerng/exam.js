@@ -7,7 +7,7 @@ class Exam {
             initialContext : false,
             warnings        : true,
             tests           : {
-                legibility      : false,
+                legible      : false,
                 verifiable      : false
             },
             unexpectedCode      : true 
@@ -33,13 +33,13 @@ class Exam {
                     this.config.expand.warnings = data.config.expand.warnings 
                 }
                 if ( 'tests' in data.config.expand ) {
-                    if ( 'legibility' in data.config.expand.tests ) {
-                        this.config.expand.tests.legibility =
-                            data.config.expand.tests.legibility 
+                    if ( 'legible' in data.config.expand.tests ) {
+                        this.config.expand.tests.legible =
+                            data.config.expand.tests.legible 
                     }
-                    if ( 'verifiability' in data.config.expand.tests ) {
-                        this.config.expand.tests.verifiability =
-                            data.config.expand.tests.verifiability 
+                    if ( 'verifiable' in data.config.expand.tests ) {
+                        this.config.expand.tests.verifiable =
+                            data.config.expand.tests.verifiable 
                     }
                 }
                 if ( 'unexpectedCode' in data.config.expand ) {
@@ -477,7 +477,7 @@ ${ data.concerns[i].vfun.toString() }
                         ( acc, val ) => {
 
                         if          ( val.warning )             { acc.warnings.push ( val )
-                        } else if   ( val.want == 'legible' )   { acc.tests.legibility.push ( val )
+                        } else if   ( val.want == 'legible' )   { acc.tests.legible.push ( val )
                         } else                                  { acc.tests.verifiable.push ( val )
                         }
 
@@ -486,7 +486,7 @@ ${ data.concerns[i].vfun.toString() }
                         {   warnings: [],
                             tests   : {
                                 verifiable  : [],
-                                legibility  : []
+                                legible  : []
                             }
                         } 
                     )
@@ -515,13 +515,13 @@ ${ data.concerns[i].vfun.toString() }
                     }
 
                     {
-                        let testsLegibilityLabel = `Human Legibility Tests (${partitioned.tests.legibility.length}):`
+                        let testsLegibilityLabel = `Human Legibility Tests (${partitioned.tests.legible.length}):`
                         
-                        if ( this.config.expand.tests.legibility ) 
+                        if ( this.config.expand.tests.legible ) 
                                 { console.group             ( testsLegibilityLabel ) 
                         } else  { console.groupCollapsed    ( testsLegibilityLabel ) }
                         
-                        partitioned.tests.legibility.forEach( ac => ac.render() )
+                        partitioned.tests.legible.forEach( ac => ac.render() )
 
                         console.groupEnd                    ( testsLegibilityLabel ) 
                     }
@@ -532,9 +532,9 @@ ${ data.concerns[i].vfun.toString() }
 `
 **  ... (new Exam) constructed.
 *   
-*   Number of tests failed ------------ : ${ testCount - passCount - partitioned.tests.legibility.length }
+*   Number of tests failed ------------ : ${ testCount - passCount - partitioned.tests.legible.length }
 *   Number of tests passed              : ${ passCount }
-*   Number of tests to be eyeballed     : ${ partitioned.tests.legibility.length }
+*   Number of tests to be eyeballed     : ${ partitioned.tests.legible.length }
 *
 *   Number of tests (total)     : ${testCount}
 *   Number of warnings logged   : ${warnCount}
