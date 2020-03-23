@@ -16,6 +16,7 @@ class Exam {
 
     constructor ( data ) {
        
+        let failCount
         let testCount   = 0
         let passCount   = 0
         let warnCount   = 0
@@ -462,9 +463,9 @@ ${ data.concerns[i].vfun.toString() }
             concerns.push ( currentConcernPromise )
 
         } // for ( const i in data.concerns ) 
-
+        
+        
         console.groupEnd ( initialContextLabel )
-
         
         {
             console.log     ( `
@@ -495,21 +496,12 @@ ${ data.concerns[i].vfun.toString() }
                         } 
                     )
 
-                    {
-                        let warningsLabel = `Warnings (${partitioned.warnings.length}):`
-                        
-                        if ( this.config.expand.warnings ) 
-                                { console.group             ( warningsLabel ) 
-                        } else  { console.groupCollapsed    ( warningsLabel ) }
-                        
-                        partitioned.warnings.forEach        ( ac => ac.render() )
-                        console.groupEnd                    ( warningsLabel ) 
-                    }
+                    failCount = testCount - passCount - partitioned.tests.legible.length
                     
                     {
                         let testsVerifiableLabel = `Machine Verifiable Tests (${partitioned.tests.verifiable.length}):`
                         
-                        if ( this.config.expand.tests.verifiable ) 
+                        if ( this.config.expand.tests.verifiable || failCount ) 
                                 { console.group             ( testsVerifiableLabel ) 
                         } else  { console.groupCollapsed    ( testsVerifiableLabel ) }
                         
@@ -530,13 +522,24 @@ ${ data.concerns[i].vfun.toString() }
                         console.groupEnd                    ( testsLegibilityLabel ) 
                     }
 
+                    {
+                        let warningsLabel = `Warnings (${partitioned.warnings.length}):`
+                        
+                        if ( this.config.expand.warnings ) 
+                                { console.group             ( warningsLabel ) 
+                        } else  { console.groupCollapsed    ( warningsLabel ) }
+                        
+                        partitioned.warnings.forEach        ( ac => ac.render() )
+                        console.groupEnd                    ( warningsLabel ) 
+                    }
+                    
                 console.groupEnd ( `Concerns (${concerns.length}) : loop through asynchronous execution contexts:` )
                 
                 console.log (
 `
 **  ... (new Exam) constructed.
 *   
-*   Number of tests failed ------------ : ${ testCount - passCount - partitioned.tests.legible.length }
+*   Number of tests failed ------------ : ${ failCount }
 *   Number of tests passed              : ${ passCount }
 *   Number of tests to be eyeballed     : ${ partitioned.tests.legible.length }
 *
