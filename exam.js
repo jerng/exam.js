@@ -15,7 +15,10 @@ class Exam {
     }
 
     constructor ( data ) {
-       
+
+console.time('Entire Exam.')       
+console.time('Exam constructor until loop through concerns begins.')       
+
         let failCount
         let testCount   = 0
         let passCount   = 0
@@ -66,7 +69,13 @@ class Exam {
                 { console.group           ( initialContextLabel ) 
         } else  { console.groupCollapsed  ( initialContextLabel ) }
 
+console.timeEnd('Exam constructor until loop through concerns begins.')       
+
+console.time('Exam constructor entire loop through concerns.')       
+
         for ( const i in data.concerns ) {
+
+console.time('Exam constructor loop through concerns, concern #' + i)       
 
             let render
             let concernExecutor = ( fulfill, reject ) => {
@@ -462,11 +471,15 @@ ${ data.concerns[i].vfun.toString() }
             let currentConcernPromise = new Promise ( concernExecutor )
             concerns.push ( currentConcernPromise )
 
+//console.timeEnd('Exam constructor loop through concerns, concern #' + i)       
+
         } // for ( const i in data.concerns ) 
         
+console.timeEnd('Exam constructor entire loop through concerns.')       
         
         console.groupEnd ( initialContextLabel )
         
+console.time('Exam constructor end of loop though concerns, until async tasks complete.')       
         {
             console.log     ( `
 **
@@ -476,6 +489,9 @@ ${ data.concerns[i].vfun.toString() }
             // After all test promises have been fulfilled, report:
             Promise.all ( concerns ).then ( fValues => {
                 
+console.timeEnd('Exam constructor end of loop though concerns, until async tasks complete.')       
+console.time('Exam constructor reporting period.')       
+
                 console.group ( `Concerns (${concerns.length}) : loop through asynchronous execution contexts:` )
 
                     let partitioned = fValues.reduce ( 
@@ -553,6 +569,8 @@ ${ data.concerns[i].vfun.toString() }
 
 console.groupEnd ( 'Examination Results!' )
 
+console.timeEnd('Exam constructor reporting period.')       
+console.timeEnd('Entire Exam.')       
             } )
 
         }
@@ -560,3 +578,5 @@ console.groupEnd ( 'Examination Results!' )
     } // constructor()   
 
 } // class Exam
+
+
