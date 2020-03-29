@@ -2,19 +2,41 @@ export { Exam }
 
 class Exam {
 
-    defaultConfig = {
-        expand : {
-            initialContext : false,
-            warnings        : true,
-            tests           : {
-                legible      : false,
-                verifiable      : false
-            },
-            unexpectedCode      : true 
-        }
+    //  Time wasting function.
+    // degree = 8 takes about a second on my laptop
+    static wasteSomeTime ( degree ) {       
+        return this.primeFactorsTo ( Math.pow ( degree, degree ) )
     }
 
+    //  https://www.w3resource.com/javascript-exercises/javascript-math-exercise-43.php
+    static primeFactorsTo ( max ) {
+        var store  = [], i, j, primes = [];
+        for (i = 2; i <= max; ++i) 
+        {
+            if (!store [i]) 
+              {
+                primes.push(i);
+                for (j = i << 1; j <= max; j += i) 
+                {
+                    store[j] = true;
+                }
+            }
+        }
+        return primes;
+    }
     constructor ( data ) {
+
+        this.defaultConfig = {
+            expand : {
+                initialContext : false,
+                warnings        : true,
+                tests           : {
+                    legible      : false,
+                    verifiable      : false
+                },
+                unexpectedCode      : true 
+            }
+        }
 
 console.time('Entire Exam.')       
 console.time('Exam constructor until loop through concerns begins.')       
