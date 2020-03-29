@@ -70,7 +70,6 @@ console.time('Exam constructor until loop through concerns begins.')
         } else  { console.groupCollapsed  ( initialContextLabel ) }
 
 console.timeEnd('Exam constructor until loop through concerns begins.')       
-
 console.time('Exam constructor entire loop through concerns.')       
 
         for ( const i in data.concerns ) {
@@ -79,7 +78,6 @@ console.time('Exam constructor loop through concerns, concern #' + i)
 
             let render
             let concernExecutor = ( fulfill, reject ) => {
-
 /** LOGIC MAP
  *
  *          IF the Concern is a Warning, then RETURN. 
@@ -134,7 +132,6 @@ console.time('Exam constructor loop through concerns, concern #' + i)
 A_WARNING_NOT_A_TEST: 
 { 
                 if ( data.concerns[i].warning ) {
-
                     warnCount ++
                     let currentWarnCount = parseInt ( warnCount)
                     render = () => {
@@ -144,7 +141,6 @@ A_WARNING_NOT_A_TEST:
                     }
                     fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                     return // concernExecutor
-
                 } // if 
 
 } // A_WARNING_NOT_A_TEST
@@ -154,32 +150,33 @@ A_WARNING_NOT_A_TEST:
                 testCount ++
                 let currentTestCount = parseInt ( testCount)
                 let codeLabel = `Code:`
-
                 let returned
 
 TEST_WHERE_ERROR_EXPECTED: 
 {   
                 if ( data.concerns[i].expectError ) {
-
                     let errorThrown     = false
                     try {
-
                         returned        = data.concerns[i].code()
-
                     } catch (e) {
-
                         errorThrown     = true 
                         passCount ++ 
-
                         render = () => {
                             console.groupCollapsed      ( `Test: #${ currentTestCount } passed (caught an Error) - ${ data.concerns[i].test }` )
                             console.log                 ( `
 *   Caught  : ${ e }
 *   Returned: ${ returned }`) 
-                            {   if ( this.config.expand.unexpectedCode ) 
+                            {   {   console.group ('Reran code for deeper trace:')
+                                    try {
+                                        data.concerns[i].code()
+                                    } catch (e) {
+                                        console.error ( e ) 
+                                    }
+                                    console.groupEnd ('Reran code for deeper trace:')
+                                }
+                                if ( this.config.expand.unexpectedCode ) 
                                         { console.group             ( codeLabel ) 
                                 } else  { console.groupCollapsed    ( codeLabel ) }
-
                                 console.log             ( data.concerns[i].code.toString() )
                                 console.groupEnd        ()
                             }
@@ -187,11 +184,8 @@ TEST_WHERE_ERROR_EXPECTED:
                         }
                         fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                         return // concernExecutor
-
                     } finally {
-                        
                         if ( ! errorThrown ) {
-                            
                             render = () => {
                                 console.group       ( `Test: #${ currentTestCount } failed (caught no Error) - ${ data.concerns[i].test }` )
                                 console.error       ( `
@@ -204,56 +198,37 @@ TEST_WHERE_ERROR_EXPECTED:
                             }
                             fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                             return // concernExecutor
-
                         } // if ( ! errorThrown)
-
                     } // finally
-                    
                 } // if 
-
 } // TEST_WHERE_ERROR_EXPECTED
 
 TEST_WHERE_ERROR_NOT_EXPECTED:
-{
-                try {   
+{               try {   
                     returned = data.concerns[i].code()  
-
-                    if ( ! ( 'want' in data.concerns[i] ) ) 
-                    {
+                    if ( ! ( 'want' in data.concerns[i] ) ) {
                         throw `Writers of this test did not specify what they wanted.`
                     }
                     else if (   typeof data.concerns[i].want        == 'string' // redundant with 'legible' 
                             &&  data.concerns[i].want.toLowerCase() == 'vfun' ) 
                     {
-
-                        if ( ! ( 'vfun' in data.concerns[i] ) ) 
-                        {
+                        if ( ! ( 'vfun' in data.concerns[i] ) ) {
                             throw `Writers of this test did not specify the validation function.`
                         }
-
 // Explicit: Validation function IS expected:
 // Explicit: Asynchronous test result handler:
-
-                        else if ( returned instanceof Promise )
-                        {
-                            
+                        else if ( returned instanceof Promise ) {
                             let onFulfill   = fValue    => {
-
                                 if ( data.concerns[i].vfun ( fValue ) !== true ) {
-
                                     throw `
 *   We wanted the code to return a Promise fulfiled with the value, RV, where VFUN(RV) returns (true), given a validation function, VFUN, whose body is : 
-
 ${ data.concerns[i].vfun.toString() } 
-
 *
 *   Returned: a Promise
 *       State   : fulfilled
 *       Value   : ${fValue}`
                                 }
-                                
                                 passCount ++
-                                
                                 // This code is redundant with this code
                                 // TAG: EXPECT_NO_ERROR_RENDER_NO_ERROR FIXME 
                                 render = () => {
@@ -270,14 +245,12 @@ ${ data.concerns[i].vfun.toString() }
                                 }
                                 fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                             }
-
                             let onReject    = rReason   => {
                                 throw `
 *   Returned: a Promise 
 *       State   : rejected
 *       Reason  : ${rReason}`
                             }
-
                             let onCatch     = error => {
                                 // This code is redundant with this code
                                 // TAG: EXPECT_NO_ERROR_RENDER_ERROR FIXME 
@@ -285,11 +258,17 @@ ${ data.concerns[i].vfun.toString() }
                                     console.group       ( `Test: #${ currentTestCount } failed - ${ data.concerns[i].test }` )
                                     console.error       ( `
 *   Caught  : ${ error }`) 
-                                    {   if ( this.config.expand.unexpectedCode ) 
+                                    {   {   console.group ('Reran code for deeper trace:')
+                                            try {
+                                                data.concerns[i].code()
+                                            } catch (e) {
+                                                console.error ( e ) 
+                                            }
+                                            console.groupEnd ('Reran code for deeper trace:')
+                                        }
+                                        if ( this.config.expand.unexpectedCode ) 
                                                 { console.group             ( codeLabel ) 
                                         } else  { console.groupCollapsed    ( codeLabel ) }
-
-
                                         console.error   ( data.concerns[i].code.toString() )
                                         console.groupEnd()
                                     }
@@ -297,15 +276,12 @@ ${ data.concerns[i].vfun.toString() }
                                 }
                                 fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                             }                          
-
                             let asyncTestCode = returned    .then   ( onFulfill, onReject )
                                                             .catch  ( onCatch )
                             return // concernExecutor
                         }
-
 // Explicit: Validation function IS expected:
 // Implicit: Synchronous test result handler:
-
                         else if ( data.concerns[i].vfun ( returned ) !== true )
                         {
                             throw   `
@@ -315,15 +291,10 @@ ${ data.concerns[i].vfun.toString() }
 
 *
 *   Returned: ${returned}`
-
                         }
-
 // Implicit: By this line, the vfun(returned) must be TRUE
-                    
                     } 
-
 // Implicit: By this line, we know we're not looking for a vfun
-                    
                     else if (   typeof data.concerns[i].want        == 'string' // redundant with 'vfun'
                             &&  data.concerns[i].want.toLowerCase() == 'legible' ) 
                     {
@@ -340,16 +311,12 @@ ${ data.concerns[i].vfun.toString() }
                         fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                         return // concernExecutor
                     }
-                    
 // Implicit: Validation function NOT expected:
 // Explicit: Asynchronous test result handler: 
-
                     else if ( returned instanceof Promise) 
                     {
                         let onFulfill   = fValue    => {
-
                             if ( fValue !== data.concerns[i].want ) {
-
                                 throw `
 *   We wanted the code to return a Promise fulfiled with the value : ${data.concerns[i].want}
 *
@@ -357,9 +324,7 @@ ${ data.concerns[i].vfun.toString() }
 *       State   : fulfilled
 *       Value   : ${fValue}`
                             }
-                            
                             passCount ++
-                            
                             // This code is redundant with this code
                             // TAG: EXPECT_NO_ERROR_RENDER_NO_ERROR FIXME 
                             render = () => {
@@ -376,14 +341,12 @@ ${ data.concerns[i].vfun.toString() }
                             }
                             fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                         }
-
                         let onReject    = rReason   => {
                             throw `
 *   Returned: a Promise 
 *       State   : rejected
 *       Reason  : ${rReason}`
                         }
-
                         let onCatch     = error => {
                             // This code is redundant with this code
                             // TAG: EXPECT_NO_ERROR_RENDER_ERROR FIXME 
@@ -391,10 +354,17 @@ ${ data.concerns[i].vfun.toString() }
                                 console.group       ( `Test: #${ currentTestCount } failed - ${ data.concerns[i].test }` )
                                 console.error       ( `
 *   Caught  : ${ error }`) 
-                                {   if ( this.config.expand.unexpectedCode ) 
+                                {   {   console.group ('Reran code for deeper trace:')
+                                        try {
+                                            data.concerns[i].code()
+                                        } catch (e) {
+                                            console.error ( e ) 
+                                        }
+                                        console.groupEnd ('Reran code for deeper trace:')
+                                    }
+                                    if ( this.config.expand.unexpectedCode ) 
                                             { console.group             ( codeLabel ) 
                                     } else  { console.groupCollapsed    ( codeLabel ) }
-
                                     console.error   ( data.concerns[i].code.toString() )
                                     console.groupEnd()
                                 }
@@ -402,25 +372,18 @@ ${ data.concerns[i].vfun.toString() }
                             }
                             fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                         }                          
-
                         let asyncTestCode = returned    .then   ( onFulfill, onReject )
                                                         .catch  ( onCatch )
                         return // concernExecutor
-
                     } // else if ( returned instanceof Promise )
-
 // Implicit: Validation function NOT expected:
 // Implicit: Synchronous test result handler: 
-
                     else if ( returned !== data.concerns[i].want )
                     {
                         throw `We wanted the code to return : ${data.concerns[i].want}`
                     }
-
 // Implicit: Synchronous test has passed. 
-
                     passCount ++
-
                     // This code is redundant with this code
                     // TAG: EXPECT_NO_ERROR_RENDER_NO_ERROR FIXME 
                     render = () => {
@@ -437,9 +400,7 @@ ${ data.concerns[i].vfun.toString() }
                     }
                     fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                     return // concernExecutor
-
                 } catch (e) {   
-               
                     // This code is redundant with this code
                     // TAG: EXPECT_NO_ERROR_RENDER_ERROR FIXME 
                     render = () => {
@@ -450,10 +411,17 @@ ${ data.concerns[i].vfun.toString() }
     try { return returned } catch ( e ) {} 
     finally { return JSON.stringify ( returned ) } })() } 
 *   Message : ${ e }`) 
-                        {   if ( this.config.expand.unexpectedCode ) 
+                        {   {   console.group ('Reran code for deeper trace:')
+                                try {
+                                    data.concerns[i].code()
+                                } catch (e) {
+                                    console.error ( e ) 
+                                }
+                                console.groupEnd ('Reran code for deeper trace:')
+                            }
+                            if ( this.config.expand.unexpectedCode ) 
                                     { console.group             ( codeLabel ) 
                             } else  { console.groupCollapsed    ( codeLabel ) }
-
                             console.error   ( data.concerns[i].code.toString() )
                             console.groupEnd()
                         }
@@ -461,24 +429,15 @@ ${ data.concerns[i].vfun.toString() }
                     }
                     fulfill ( Object.assign ( data.concerns[i], { render : render } ) )
                     return // concernExecutor
-
                 } // catch
-
 } // TEST_WHERE_ERROR_NOT_EXPECTED
-
             } // concernExecutor
-
             let currentConcernPromise = new Promise ( concernExecutor )
             concerns.push ( currentConcernPromise )
-
 //console.timeEnd('Exam constructor loop through concerns, concern #' + i)       
-
         } // for ( const i in data.concerns ) 
-        
 console.timeEnd('Exam constructor entire loop through concerns.')       
-        
         console.groupEnd ( initialContextLabel )
-        
 console.time('Exam constructor end of loop though concerns, until async tasks complete.')       
         {
             console.log     ( `
