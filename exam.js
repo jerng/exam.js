@@ -49,6 +49,7 @@ console.time('Exam constructor until loop through concerns begins.')
         let concerns    = []
       
         // we should run a deep-merge function here (TODO)
+        // Or just a bunch of Object.assign() statements.
         this.config = { ... this.defaultConfig }
         if ( 'config' in data ) {
             if ( 'expand' in data.config ) {
@@ -56,8 +57,9 @@ console.time('Exam constructor until loop through concerns begins.')
                     this.config.expand.initialContext =
                         data.config.expand.initialContext 
                 }
-                if ( 'warnings' in data.config.expand ) {
-                    this.config.expand.warnings = data.config.expand.warnings 
+                if ( 'unexpectedCode' in data.config.expand ) {
+                    this.config.expand.unexpectedCode =
+                        data.config.expand.unexpectedCode 
                 }
                 if ( 'tests' in data.config.expand ) {
                     if ( 'legible' in data.config.expand.tests ) {
@@ -69,10 +71,12 @@ console.time('Exam constructor until loop through concerns begins.')
                             data.config.expand.tests.verifiable 
                     }
                 }
-                if ( 'unexpectedCode' in data.config.expand ) {
-                    this.config.expand.unexpectedCode =
-                        data.config.expand.unexpectedCode 
+                if ( 'warnings' in data.config.expand ) {
+                    this.config.expand.warnings = data.config.expand.warnings 
                 }
+            }
+            if ( 'retraceDeep' in data.config ) {
+                this.config.retraceDeep = data.config.retraceDeep 
             }
         }
 
