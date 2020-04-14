@@ -28,14 +28,15 @@ class Exam {
 
         this.defaultConfig = {
             expand : {
-                initialContext : false,
-                warnings        : true,
+                initialContext  : false,
+                unexpectedCode  : true,
                 tests           : {
-                    legible      : false,
+                    legible         : false,
                     verifiable      : false
                 },
-                unexpectedCode      : true 
-            }
+                warnings        : true,
+            },
+            retraceDeep :   true
         }
 
 console.time('Entire Exam.')       
@@ -188,13 +189,21 @@ TEST_WHERE_ERROR_EXPECTED:
                             console.log                 ( `
 *   Caught  : ${ e }
 *   Returned: ${ returned }`) 
-                            {   {   console.group ('Reran code for deeper trace:')
-                                    try {
-                                        data.concerns[i].code()
-                                    } catch (e) {
-                                        console.error ( e ) 
+                            {   {   if ( this.config.retraceDeep ) 
+                                    {
+                                        console.group ('Reran code for deeper trace:')
+                                        try {
+                                            data.concerns[i].code()
+                                        } catch (e) {
+                                            console.error ( e ) 
+                                        }
+                                        console.groupEnd ('Reran code for deeper trace:')
                                     }
-                                    console.groupEnd ('Reran code for deeper trace:')
+                                    else 
+                                    {
+                                        console.log ( `Is your stack trace too shallow? Hint: set (config.retraceDeep) to (true)` ) 
+                                    }   // ` shim: syntax highlighting hack
+                                
                                 }
                                 if ( this.config.expand.unexpectedCode ) 
                                         { console.group             ( codeLabel ) 
@@ -280,13 +289,21 @@ ${ data.concerns[i].vfun.toString() }
                                     console.group       ( `Test: #${ currentTestCount } failed - ${ data.concerns[i].test }` )
                                     console.error       ( `
 *   Caught  : ${ error }`) 
-                                    {   {   console.group ('Reran code for deeper trace:')
-                                            try {
-                                                data.concerns[i].code()
-                                            } catch (e) {
-                                                console.error ( e ) 
+                                    {   {   if ( this.config.retraceDeep ) 
+                                            {
+                                                console.group ('Reran code for deeper trace:')
+                                                try {
+                                                    data.concerns[i].code()
+                                                } catch (e) {
+                                                    console.error ( e ) 
+                                                }
+                                                console.groupEnd ('Reran code for deeper trace:')
                                             }
-                                            console.groupEnd ('Reran code for deeper trace:')
+                                            else 
+                                            {
+                                                console.log ( `Is your stack trace too shallow? Hint: set (config.retraceDeep) to (true)` ) 
+                                            }   // ` shim: syntax highlighting hack
+                                        
                                         }
                                         if ( this.config.expand.unexpectedCode ) 
                                                 { console.group             ( codeLabel ) 
@@ -376,13 +393,21 @@ ${ data.concerns[i].vfun.toString() }
                                 console.group       ( `Test: #${ currentTestCount } failed - ${ data.concerns[i].test }` )
                                 console.error       ( `
 *   Caught  : ${ error }`) 
-                                {   {   console.group ('Reran code for deeper trace:')
-                                        try {
-                                            data.concerns[i].code()
-                                        } catch (e) {
-                                            console.error ( e ) 
+                                {   {   if ( this.config.retraceDeep ) 
+                                        {
+                                            console.group ('Reran code for deeper trace:')
+                                            try {
+                                                data.concerns[i].code()
+                                            } catch (e) {
+                                                console.error ( e ) 
+                                            }
+                                            console.groupEnd ('Reran code for deeper trace:')
                                         }
-                                        console.groupEnd ('Reran code for deeper trace:')
+                                        else 
+                                        {
+                                            console.log ( `Is your stack trace too shallow? Hint: set (config.retraceDeep) to (true)` ) 
+                                        }   // ` shim: syntax highlighting hack
+                                    
                                     }
                                     if ( this.config.expand.unexpectedCode ) 
                                             { console.group             ( codeLabel ) 
@@ -433,13 +458,21 @@ ${ data.concerns[i].vfun.toString() }
     try { return returned } catch ( e ) {} 
     finally { return JSON.stringify ( returned ) } })() } 
 *   Message : ${ e }`) 
-                        {   {   console.group ('Reran code for deeper trace:')
-                                try {
-                                    data.concerns[i].code()
-                                } catch (e) {
-                                    console.error ( e ) 
+                        {   {   if ( this.config.retraceDeep ) 
+                                {
+                                    console.group ('Reran code for deeper trace:')
+                                    try {
+                                        data.concerns[i].code()
+                                    } catch (e) {
+                                        console.error ( e ) 
+                                    }
+                                    console.groupEnd ('Reran code for deeper trace:')
                                 }
-                                console.groupEnd ('Reran code for deeper trace:')
+                                else 
+                                {
+                                    console.log ( `Is your stack trace too shallow? Hint: set (config.retraceDeep) to (true)` ) 
+                                }   // ` shim: syntax highlighting hack
+                            
                             }
                             if ( this.config.expand.unexpectedCode ) 
                                     { console.group             ( codeLabel ) 
